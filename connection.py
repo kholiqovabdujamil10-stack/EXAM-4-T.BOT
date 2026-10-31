@@ -1,3 +1,4 @@
+
 import os
 import asyncpg
 from dotenv import load_dotenv
@@ -5,7 +6,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 passw = os.getenv("PASSWORD_DB")
-
 
 async def connection_db():
     return await asyncpg.connect(
@@ -21,30 +21,28 @@ async def create_table():
     try:
         conn = await connection_db()
         await conn.execute("""
-            CREATE TABLE IF NOT EXISTS employers (
-                employer_id SERIAL PRIMARY KEY,
-                telegram_id BIGINT UNIQUE NOT NULL,
-                employer_name TEXT
-            );
-
             CREATE TABLE IF NOT EXISTS vacancies (
-                vacancy_id SERIAL PRIMARY KEY,
-                employer_id int references employer(employer_id),
-                position text,
-                salary bigint,
-                description text,
-                photo_file_id text,
-                status text,
+                id SERIAL PRIMARY KEY,
+                employer_id BIGINT NOT NULL,
+                company TEXT NOT NULL,
+                position TEXT NOT NULL,
+                salary NUMERIC(12, 2) NOT NULL CHECK (salary > 0),
+                description TEXT NOT NULL,
+                photo_file_id TEXT NOT NULL,
+                status TEXT DEFAULT 'open'
+                    CHECK (status IN ('open', 'closed')),
                 created_at TIMESTAMP DEFAULT NOW()
             );
 
             CREATE TABLE IF NOT EXISTS applications (
-                application_id SERIAL PRIMARY KEY,
-                telegram_id INTEGER REFERENCES users(user_id),
-                vacancy_id INTEGER REFERENCES vacancies(vacancy_id),
-                applied_at timestamp default now()
-            );
+                id SERIAL PRIMARY KEY,
+                user_id BIGINT NOT NULL,
+                vacancy_id INTEGER NOT NULL
+                    REFERENCES vacancies(id) ON DELETE CASCADE,
+                applied_at TIMESTAMP DEFAULT NOW(),
 
+                UNIQUE(user_id, vacancy_id)
+            );
         """)
 
         print("Database tables created successfully")
