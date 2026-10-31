@@ -29,7 +29,7 @@ async def get_vacancy():
 async def check_admin():
     conn = await connection_db()
     try:
-        return await conn.fetchval("SELECT is_admin FROM vacancies")
+        return await conn.fetch("SELECT is_admin FROM vacancies")
     except Exception as erorr:
         print(f"Check admin error: {erorr}")
 
@@ -65,12 +65,12 @@ async def add_vacancy(position, salary, description, photo_file_id):
     conn = await connection_db()
     try:
         await conn.execute("""
-            INSERT INTO dishes (position, salary, description, photo_file_id)
+            INSERT INTO vacancies (position, salary, description, photo_file_id)
             VALUES ($1, $2, $3, $4)
         """, position, salary, description, photo_file_id)
         return True
     except Exception as erorr:
-        print(f"Add dish error: {erorr}")
+        print(f"Add vacancy error: {erorr}")
 
     finally:
         await conn.close()
@@ -98,7 +98,7 @@ async def delete_vacancy(vacancy_id):
         return result == "DELETE 1"
     
     except Exception as erorr:
-        print(f"Delete dish error: {erorr}")
+        print(f"Delete vacancy_id error: {erorr}")
 
     finally:
         await conn.close()
