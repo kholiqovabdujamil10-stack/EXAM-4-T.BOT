@@ -10,7 +10,7 @@ async def created_vacansy(position, salary, description):
         """, position, salary, description)
         return True
     except Exception as erorr:
-        print(f"Create user error: {erorr}")
+        print(f"Create vacancy error: {erorr}")
 
     finally:
         await conn.close()
@@ -21,7 +21,7 @@ async def get_vacancy():
     try:
         return await conn.fetchrow("SELECT * FROM vacancies")
     except Exception as erorr:
-        print(f"Get user error: {erorr}")
+        print(f"Get vacancy error: {erorr}")
     finally:
         await conn.close()
 
@@ -42,7 +42,7 @@ async def get_employers():
     try:
         return await conn.fetch("SELECT * FROM employers ORDER BY id")
     except Exception as erorr:
-        print(f"Get categories error: {erorr}")
+        print(f"Get employer error: {erorr}")
 
     finally:
         await conn.close()
@@ -55,7 +55,7 @@ async def get_applications(application_id):
             "SELECT * FROM applications WHERE id = $1", application_id
         )
     except Exception as erorr:
-        print(f"Get category error: {erorr}")
+        print(f"Get applications error: {erorr}")
     finally:
         await conn.close()
 
